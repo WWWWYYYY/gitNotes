@@ -1,0 +1,197 @@
+一、阐述
+    Git是分布式的，GIT和其它非分布式的版本控制系统，例如SVN，CVS等，最核心的区别。好处是跟其他同事不会有太多的冲突，自己写的代码放在自己电脑上，一段时间后再提交、合并，也可以不用联网在本地提交；
+    GIT不需要联网，可以先提交到本地。
+二、为什么要用git
+1) git每台电脑都有一个版本库，可以在本地做版本管理；
+2) 速度快。git的速度远超大部分版本管理系统，包括svn
+3) 强大的分支管理功能
+4) 活跃的开源社区，如最著名的github
+三、github
+    gitHub是一个面向开源及私有软件项目的托管平台，因为只支持git 作为唯一的版本库格式进行托管，故名gitHub。
+四、git安装
+    参考https://git-scm.com/book/zh/v1/起步-安装-Git
+五、git下有三类文件
+1、被追踪的 tracked 已经添加到版本库的文件
+2、未被追踪的 untracted 为添加到版本库的文件
+3、忽略的 ignored 永远不想提交到git服务器上的文件
+    ①在工程项创建.gitignore文件并编辑：通常会忽略以下文件
+        .gitignore
+        .idea
+        target 
+        *.iml
+编辑了.gitignore文件之后，先前已经提交了这些不该提交的文件是不会被忽略的；为了在服务器删除这些要忽略的文件应该先执行：
+git rm -r --cached .    #清除缓存
+git add . #重新加入缓存
+git commit -am '清除要忽略的文件' #重新提交到本地版本库；commit之前一定要执行add，不然没有内容可以提交
+
+六、git指令
+1、初始化，并在当前目录下创建.git目录
+git init 
+
+2、配置账户信息，否则提交会提示异常
+git config user.name 'xxxx'
+git config user.email 'xxxx'
+
+3、检查版本状态
+git status （最常用）
+
+4、向本地版本库添加索引和提交代码到本地版本库
+git add filename 指定添加某个文件
+git add -A 添加当前文件夹下所有新增、修改、删除文件的索引 （推荐使用）
+git add .   添加当前文件夹下所有新增、修改文件的索引 （不推荐）
+ps：.代表所有新增、修改  -A 新增、修改、删除
+git commit -m '更改内容的描述'
+git commit -am ’更改内容的描述‘ 加入缓存区并提交 （推荐使用）
+
+5、日志查看
+git log 显示详细信息的日志
+git log --oneline 显示每个提交点和备注
+git log --oneline --graph 显示每个分支上的每个提交点和备注
+例子：
+    0139953 (HEAD -> master) aaa  (最新)
+    877aa27 重新提交
+    31c25ea idea
+    5a1b5d5 abc  （最旧）
+7位数表示提交点；每次提交都会生成40位的hash码，从40位中取出前7位作为提交点。
+
+6、打tag
+git tag -a V0.1 5a1b5d5  （回车以后进入vim模式编辑这个tag的备注，保存并退出）其中V0.1表示要打的tag，5a1b5d5表示提交点。
+例子：
+    [mac@node2:enjoy-git]$ git log --oneline --graph
+    * 0139953 (HEAD -> master, tag: V0.4) aaa
+    * 877aa27 (tag: V0.3) 重新提交
+    * 31c25ea (tag: V0.2) idea
+    * 5a1b5d5 (tag: V0.1) abc (都打上了tag)
+正常情况下不是每次提交都打tag，而是开发分支合并到master分支后才打一个tag。每个分支在一个提交点上只能打一个tag，多次打同一个提交点上会覆盖。
+
+7、分支
+git branch 查看有多少分支
+git branch newbranchName 创建一个新的分支 默认从最新的提交点创建
+例子：
+    [mac@node2:enjoy-git]$ git log --oneline
+    0139953 (HEAD -> master, tag: V0.4, newbranchName) aaa （从结果看出在master提交点为0139953处创建了newbranchName分支）
+    877aa27 (tag: V0.3) 重新提交
+    31c25ea (tag: V0.2) idea
+    5a1b5d5 (tag: V0.1) abc
+git branch newbranchName 877aa27   指定提交点为877aa27处创建一个新的分支
+git branch -d  ranchName  删除一个分支 
+例子：
+    [mac@node2:enjoy-git]$ git branch
+    * master  （*号代表当前所在的分支，因此提交时都会提交当*号所在的分支上）
+    newbranchName
+git checkout newbranchName 切换到newbranchName分支上
+
+分支合并：
+git checkout master  合并分支前先看看所在的分支是哪一个，不对的情况下要切换分支
+git merge newbranchName 把newbranchName上的代码合并到master （推荐使用）
+和并分支时容易发生冲突，因此需要查看控制台提供信息，把提到的文件里的冲突全部修改一下，修改完之后执行 
+git commit -am 'merge msg'
+避免冲突主要还是靠开发规范，通过包命名划分模块。如果总是发生一堆冲突也很头疼。
+
+合并分支方式2：
+git rebase newbranchName #该命令特点就是合并之后会看不出newbranchName分支提交过的提交点。（不推荐）
+git log 看不到相关合并的信息
+git reflog 可以看到相关的合并信息
+
+
+8、查看最新提交点的详细信息
+git show HEAD
+
+9、版本回退
+git reset --hard v0.3 版本回退到某个tag
+git reset --hard 31c25ea 版本回退到某个提交点
+
+10、查看全局日志
+git reflog #看到所有操作的日志，包括提交、回退、合并版本
+和git log的区别：如果版本回退了，有些提交点是显示不出来的。因此如果我们版本回退后悔时需要使用git reflog查询所有的提交点后再使用git reset --hard 命令
+
+11、初始化本地项目并提交到远程仓库
+echo "# enjoy-git" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/WWWWYYYY/mavenNotes.git   #添加并为一个远程仓库取一个别名origin
+git push -u origin master #提交到主干上 ；origin 只是一个别名
+
+
+如果持续提交内容就执行：
+git remote add origin https://github.com/WWWWYYYY/mavenNotes.git   #添加并为一个远程仓库取一个别名origin
+git push -u origin master #提交到主干上 ；origin 只是一个别名
+
+
+11.1、git远程连接
+①、https方式
+git clone https://github.com/WWWWYYYY/enjoy-git.git #从远程仓库克隆项目到本地；会在所在目录创建enjoy-git文件夹。
+
+②、ssh方式 （用时再查）
+配置公私钥
+ssh-keygen -t rsa -C 394489664@qq.com  #注册git时的邮箱
+ls -l /Users/mac/.ssh/
+total 16
+-rw-------  1 mac  staff  1823  4  4 10:15 id_rsa   #私钥
+-rw-r--r--  1 mac  staff   398  4  4 10:15 id_rsa.pub #公钥
+拷贝 id_rsa.pub 文件中的内容后，打开github的sttings》ssh 创建ssh keys 粘贴内容即可
+配置完就可以使用该方式进行拉取或者提交代码了。
+git remote add ssh-enjoy git@github.com:WWWWYYYY/enjoy-git.git #添加并为一个远程仓库取一个别名ssh-enjoy
+git push -u ssh-enjoy master #提交到主干上 ； ssh-enjoy 只是一个别名
+
+12、查看远程仓库
+git remote #必须在已经连接过git远程服务的基础上使用 
+
+13、更新本地代码
+
+git fetch origin master  #拉取到本地但不合并
+git pull origin master  #拉取到本地并且合并 pull=fetch+merge （推荐使用）
+如果冲突了，则修改冲突的文件后执行
+git commit -am 'commit msg' #提交到本地
+git push -u rigin master    #上传
+
+
+
+七、不建议使用的命令
+stash、unstash、rebase
+
+八、git flow（工程规模比较大规范，团队人比较多>10个）
+参考 git flow图片
+
+
+master：主分支
+develop：开发分支
+feature：开发新功能分支
+release：测试分支
+hotfix：bug修复分支
+master分支又称主干分支、生产分支、主分支、版本分支等等；master分支的代码由开发分支合并而来，并且每次合并必须打上一个tag，用来表示这次合并都做了什么功能
+develop分支：
+    1、用于合并feature、hotfix、release分支
+    2、在develop基础上创建feature、release分支
+    3、将已完成的功能合并到master，并打上tag，标志着某个阶段或者某个功能的完工。
+feature分支：由develop分支的提交点新建的分支，最终合并到develop分支上，用于开发新功能，开发新功能结束时才提交（结束的意思包含：代码快发完成、开发者要完成单元测试，之后测试交给测试部）；因此同一时间可以从develop分支上创建多个feature分支，但是不要太多。
+release测试分支：发布一个新版本，在合并到master分支之前创建的分支，测试过程中如果有改动就需要合并到develop分支，如果没有改动就不需要合并到develop分支。
+hotfix分支；简称解决某个严重bug而新建的分支，直接从master分支的提交点上创建；当bug修复以后合并到 develop分支，而后新建测试分支，测试通过后再把测试分支上的一些小改动合并到 develop分支，最终合并到 master分支，这才表示这个bug修复完了。整个流程：master》hotfix》develop》release》devlop》master
+
+ps：git flow 提到的是针对规模大的项目，如果项目规模比较小，要根据情况简化这些规范，免得开发一个小功能消耗太多的管理时间。
+九、git工具
+github desktop
+idea
+十、gitlab
+略、
+
+总结：
+1、最常用命令：（需要记忆）
+git status 
+git add -A 
+git commit -am 'commit msg'
+git log --oneline --graph
+git tag -a V0.1 5a1b5d5 
+git branch
+git show HEAD
+git remote add abc https://github.com/WWWWYYYY/mavenNotes.git  
+git push -u abc master 
+git pull origin master 
+git clone https://github.com/WWWWYYYY/enjoy-git.git
+2、当我们修改提交后发现git远程仓库没有变化应该检查以下3个命令是否按顺序都执行了
+git add -A 
+git commit -am 'commit msg'
+git push -u abc master
+3、工作中开发者最常接触的工具是idea，因此了解这些命令之后应该知道idea上都是这么操作的，原理就是触发底层发送命令而已。
+
