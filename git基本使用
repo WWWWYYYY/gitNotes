@@ -1,15 +1,37 @@
 一、阐述
     Git是分布式的，GIT和其它非分布式的版本控制系统，例如SVN，CVS等，最核心的区别。好处是跟其他同事不会有太多的冲突，自己写的代码放在自己电脑上，一段时间后再提交、合并，也可以不用联网在本地提交；
     GIT不需要联网，可以先提交到本地。
+
+
+
+
+
+
+
+
 二、为什么要用git
 1) git每台电脑都有一个版本库，可以在本地做版本管理；
 2) 速度快。git的速度远超大部分版本管理系统，包括svn
 3) 强大的分支管理功能
 4) 活跃的开源社区，如最著名的github
+
+
+
+
+
+
 三、github
     gitHub是一个面向开源及私有软件项目的托管平台，因为只支持git 作为唯一的版本库格式进行托管，故名gitHub。
+
+
+
+
 四、git安装
     参考https://git-scm.com/book/zh/v1/起步-安装-Git
+
+
+
+
 五、git下有三类文件
 1、被追踪的 tracked 已经添加到版本库的文件
 2、未被追踪的 untracted 为添加到版本库的文件
@@ -23,6 +45,15 @@
 git rm -r --cached .    #清除缓存
 git add . #重新加入缓存
 git commit -am '清除要忽略的文件' #重新提交到本地版本库；commit之前一定要执行add，不然没有内容可以提交
+
+
+
+
+
+
+
+
+
 
 六、git指令
 1、初始化，并在当前目录下创建.git目录
@@ -148,11 +179,21 @@ git push -u rigin master    #上传
 
 
 
+
+
+
+
 七、不建议使用的命令
 stash、unstash、rebase
 
+
+
+
+
+
+
 八、git flow（工程规模比较大规范，团队人比较多>10个）
-参考 git flow图片
+参考 <git-flow.png>
 
 
 master：主分支
@@ -170,11 +211,29 @@ release测试分支：发布一个新版本，在合并到master分支之前创�
 hotfix分支；简称解决某个严重bug而新建的分支，直接从master分支的提交点上创建；当bug修复以后合并到 develop分支，而后新建测试分支，测试通过后再把测试分支上的一些小改动合并到 develop分支，最终合并到 master分支，这才表示这个bug修复完了。整个流程：master》hotfix》develop》release》devlop》master
 
 ps：git flow 提到的是针对规模大的项目，如果项目规模比较小，要根据情况简化这些规范，免得开发一个小功能消耗太多的管理时间。
+
+
+
+
+
+
+
+
 九、git工具
 github desktop
 idea
+
+
+
+
+
+
 十、gitlab
 略、
+
+
+
+
 
 总结：
 1、最常用命令：（需要记忆）
